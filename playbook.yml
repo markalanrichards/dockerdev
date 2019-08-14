@@ -1,0 +1,24 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  remote_user: root
+  roles:
+  - automatic-updates
+  - docker
+  - docker-compose
+  - dockerdev
+  - expand-disk
+  - tidy-docker
+  - local-access
+  - syncing
+
+
+    
+
+
+
+
+
+
+

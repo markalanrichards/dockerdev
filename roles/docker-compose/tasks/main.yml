@@ -1,0 +1,62 @@
+- name: Test for /var/log/ansible_docker_compose attempted
+  command: 'test -e /var/log/ansible_docker_compose'
+  register: ansible_docker_compose
+  ignore_errors: True
+
+- name: Install python3-setuptools
+  when: ansible_docker_compose is failed
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - python-setuptools
+    - python3-setuptools
+    - python3-venv
+
+ 
+- name: docker syncthing volume
+  when: ansible_docker_compose is failed
+  shell: |
+    docker volume create syncthing
+  args:
+    executable: /bin/bash   
+
+- name: Install docker-compose
+  pip:
+    name: docker-compose
+    virtualenv: /opt/docker-compose/
+    virtualenv_command: pyvenv-3.7
+
+- name: copy compose project
+  copy:
+    src: compose/
+    dest: /opt/docker-compose/compose/
+
+- name: copy ca
+  when: ansible_docker_compose is failed
+  copy:
+    src: ~/ca/ca/
+    dest: /opt/docker-compose/compose/squid/ca/ca/
+
+- name: copy server
+  when: ansible_docker_compose is failed
+  copy:
+    src: ~/ca/server/
+    dest: /opt/docker-compose/compose/squid/ca/server/
+    
+
+- name: docker-compose
+  shell: |
+    source /opt/docker-compose/bin/activate
+    cd /opt/docker-compose/compose/ 
+    docker-compose up -d --build
+  args:
+    executable: /bin/bash
+    
+
+- name: Touch /var/log/ansible_docker_compose
+  ignore_errors: True
+  file:
+    path: /var/log/ansible_docker_compose
+    state: touch
+    

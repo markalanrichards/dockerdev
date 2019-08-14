@@ -1,0 +1,25 @@
+- name: Test for /var/log/ansible_dockerdev attempted
+  command: 'test -e /var/log/ansible_dockerdev'
+  register: ansible_dockerdev
+  ignore_errors: True
+
+- name: Set hostname
+  when: ansible_dockerdev is failed
+  hostname:
+    name: dockerdev
+  
+- name: Install avahi
+  when: ansible_dockerdev is failed
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - avahi-utils
+    - avahi-daemon
+
+- name: Touch /var/log/ansible_dockerdev
+  ignore_errors: True
+  file:
+    path: /var/log/ansible_dockerdev
+    state: touch
+    

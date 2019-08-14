@@ -1,0 +1,24 @@
+version: "3.7"
+services:
+  syncthing:
+    build: ./syncthing
+    networks:
+    - syncthing
+    volumes:
+      - syncthing:/opt/syncthing
+    restart: always
+
+  squid:
+    build: ./squid
+    networks:
+    - syncthing
+    ports:
+    - 443:8443
+    restart: always
+  
+networks:
+  syncthing:  
+volumes:
+  syncthing:
+    external: true
+    

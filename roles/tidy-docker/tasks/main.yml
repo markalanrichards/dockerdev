@@ -1,0 +1,5 @@
+- name: Prune everything
+  shell: |
+    docker system prune -a --volumes -f
+  args:
+    executable: /bin/bash

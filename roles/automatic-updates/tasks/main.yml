@@ -1,0 +1,5 @@
+- name: Upgrade all packages to latest version
+  apt:
+    upgrade: dist
+    update_cache: yes
+

@@ -1,0 +1,4 @@
+.kdev4
+.vagrant
+*.kdev4
+playbook.retry

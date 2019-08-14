@@ -1,0 +1,61 @@
+- name: Test for /var/log/ansible_syncing attempted
+  command: 'test -e /var/log/ansible_syncing'
+  register: ansible_syncing
+  ignore_errors: True
+  
+- name: Create /home/vagrant/bin directory if it does not exist
+  when: ansible_syncing is failed
+  remote_user: vagrant
+  become_user: vagrant
+  file:
+    path: /home/vagrant/bin
+    state: directory
+
+- name: copy dockersync.sh
+  remote_user: vagrant
+  become_user: vagrant
+  copy:
+    mode: "555"
+    src: dockersync.sh
+    dest: /home/vagrant/bin/dockersync.sh
+
+- name: Create /home/vagrant/.config/systemd directory if it does not exist
+  when: ansible_syncing is failed
+  remote_user: vagrant
+  become_user: vagrant
+  file:
+    path: /home/vagrant/.config/systemd
+    state: directory
+
+- name: copy systemd config
+  when: ansible_syncing is failed
+  remote_user: vagrant
+  become_user: vagrant
+  copy:
+    src: systemd/
+    dest: /home/vagrant/.config/systemd/
+    
+- name: 
+  when: ansible_syncing is failed
+  shell: |
+    loginctl enable-linger vagrant
+  args:
+    executable: /bin/bash   
+
+- name: 
+  when: ansible_syncing is failed
+  remote_user: vagrant
+  become_user: vagrant
+  shell: |
+    systemctl --user enable dockerdevsync.timer
+    systemctl --user start dockerdevsync.timer
+  args:
+    executable: /bin/bash   
+
+
+- name: Touch /var/log/ansible_syncing
+  ignore_errors: True
+  file:
+    path: /var/log/ansible_syncing
+    state: touch
+    

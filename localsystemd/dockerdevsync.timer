@@ -1,0 +1,10 @@
+[Unit]
+Description=Docker Dev Sync Timer
+
+[Timer]
+OnBootSec=1m
+OnUnitActiveSec=1m
+Unit=dockerdevsync.service
+
+[Install]
+WantedBy=timers.target

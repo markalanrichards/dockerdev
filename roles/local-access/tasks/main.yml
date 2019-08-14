@@ -1,0 +1,18 @@
+- name: Set authorized key taken from file
+  authorized_key:
+    user: vagrant
+    state: present
+    key: "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"
+- name: Create /home/vagrant/syncthing directory if it does not exist
+  remote_user: vagrant
+  become_user: vagrant
+  file:
+    path: /home/vagrant/syncthing
+    state: directory
+
+- name: Create /home/vagrant/syncthing/local directory if it does not exist
+  remote_user: vagrant
+  become_user: vagrant
+  file:
+    path: /home/vagrant/syncthing/local
+    state: directory

@@ -1,0 +1,27 @@
+- name: Test for /var/log/ansible_expand_disk attempted
+  command: 'test -e /var/log/ansible_expand_disk'
+  register: ansible_expand_disk
+  ignore_errors: True
+
+- name: Install cloud-initramfs-expand_disk
+  when: ansible_expand_disk is failed
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - cloud-initramfs-growroot
+
+- name: Unconditionally reboot the machine with all defaults
+  when: ansible_expand_disk is failed
+  reboot:
+    
+- name: Resize2fs
+  when: ansible_expand_disk is failed
+  shell: resize2fs /dev/vda1
+   
+- name: Touch /var/log/ansible_expand_disk
+  ignore_errors: True
+  file:
+    path: /var/log/ansible_expand_disk
+    state: touch
+    
