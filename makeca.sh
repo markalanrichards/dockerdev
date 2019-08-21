@@ -32,6 +32,7 @@ fi
 client_key=client/${client}.key
 client_csr=client/${client}.csr
 client_crt=client/${client}.crt
+client_p12=client/${client}.p12
 
 if [ ! -f $client_csr ] || [ ! -f $client_key ] || [ ! -f $client_crt ]; then
     rm -rf ./client
@@ -40,4 +41,5 @@ if [ ! -f $client_csr ] || [ ! -f $client_key ] || [ ! -f $client_crt ]; then
     openssl req -new -passin pass:mycert -key $client_key -out $client_csr \
       -subj "/C=GB/ST=GB/L=/O=/OU=/CN=$client/emailAddress="
     openssl x509 -req -days 365 -sha256 -in $client_csr -CA $ca_crt -passin pass:mycert -CAkey $ca_key -set_serial 2 -out $client_crt
+    openssl pkcs12 -export -password pass:mycert -clcerts -in $client_crt -inkey $client_key -out $client_p12
 fi 
