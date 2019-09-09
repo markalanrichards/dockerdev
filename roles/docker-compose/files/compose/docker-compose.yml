@@ -5,7 +5,9 @@ services:
     networks:
     - syncthing
     volumes:
-      - syncthing:/opt/syncthing
+      - type: bind
+        source: /home/vagrant/syncthing
+        target: /opt/syncthing
     restart: always
 
   squid:
@@ -18,7 +20,4 @@ services:
   
 networks:
   syncthing:  
-volumes:
-  syncthing:
-    external: true
     

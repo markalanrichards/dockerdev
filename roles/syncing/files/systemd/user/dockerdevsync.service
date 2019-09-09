@@ -1,7 +1,0 @@
-[Unit]
-Description=Docker Dev sync
-
-[Service]
-Type=oneshot
-ExecStart=/home/vagrant/bin/dockersync.sh
-

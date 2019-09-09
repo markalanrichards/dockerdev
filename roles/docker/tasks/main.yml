@@ -44,10 +44,11 @@
     - containerd.io
 
 - name: Add vagrant user to docker group
-  when: ansible_docker is failed
   user:
     name: vagrant
-    group: docker
+    group: vagrant
+    groups:
+    - docker
     
 - name: Touch /var/log/ansible_docker
   ignore_errors: True

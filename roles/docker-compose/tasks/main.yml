@@ -2,7 +2,7 @@
   command: 'test -e /var/log/ansible_docker_compose'
   register: ansible_docker_compose
   ignore_errors: True
-
+  
 - name: Install python3-setuptools
   when: ansible_docker_compose is failed
   apt:
@@ -12,14 +12,6 @@
     - python-setuptools
     - python3-setuptools
     - python3-venv
-
- 
-- name: docker syncthing volume
-  when: ansible_docker_compose is failed
-  shell: |
-    docker volume create syncthing
-  args:
-    executable: /bin/bash   
 
 - name: Install docker-compose
   pip:
@@ -58,5 +50,67 @@
   ignore_errors: True
   file:
     path: /var/log/ansible_docker_compose
+    state: touch
+
+    
+- name: Test for /var/log/docker_rebuilding attempted
+  command: 'test -e /var/log/docker_rebuilding'
+  register: docker_rebuilding
+  ignore_errors: True
+  
+- name: Create /home/vagrant/bin directory if it does not exist
+  when: docker_rebuilding is failed
+  remote_user: vagrant
+  become_user: vagrant
+  file:
+    path: /home/vagrant/bin
+    state: directory
+
+- name: copy rebuild.sh
+  remote_user: vagrant
+  become_user: vagrant
+  copy:
+    mode: "555"
+    src: systemd/rebuild.sh
+    dest: /home/vagrant/bin/rebuild.sh
+
+- name: Create /home/vagrant/.config/systemd directory if it does not exist
+  when: docker_rebuilding is failed
+  remote_user: vagrant
+  become_user: vagrant
+  file:
+    path: /home/vagrant/.config/systemd/user
+    state: directory
+
+- name: copy systemd config
+  when: docker_rebuilding is failed
+  remote_user: vagrant
+  become_user: vagrant
+  copy:
+    src: systemd/user/
+    dest: /home/vagrant/.config/systemd/user/
+    
+- name: 
+  when: docker_rebuilding is failed
+  shell: |
+    loginctl enable-linger vagrant
+  args:
+    executable: /bin/bash   
+
+- name: 
+  when: docker_rebuilding is failed
+  remote_user: vagrant
+  become_user: vagrant
+  shell: |
+    systemctl --user enable rebuild.timer
+    systemctl --user start rebuild.timer
+  args:
+    executable: /bin/bash   
+
+
+- name: Touch /var/log/docker_rebuilding
+  ignore_errors: True
+  file:
+    path: /var/log/docker_rebuilding
     state: touch
     

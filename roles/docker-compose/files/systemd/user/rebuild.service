@@ -1,0 +1,7 @@
+[Unit]
+Description=Docker Compose Rebuild
+
+[Service]
+Type=oneshot
+ExecStart=/home/vagrant/bin/rebuild.sh
+
