@@ -37,6 +37,13 @@
     dest: /opt/docker-compose/compose/squid/ca/server/
     
 
+- name: Create /home/vagrant/syncthing directory if it does not exist
+  remote_user: vagrant
+  become_user: vagrant
+  file:
+    path: /home/vagrant/syncthing
+    state: directory
+
 - name: docker-compose
   shell: |
     source /opt/docker-compose/bin/activate
