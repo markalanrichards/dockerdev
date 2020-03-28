@@ -1,6 +1,7 @@
 FROM debian:buster-slim
 
 RUN apt-get update \
+ && apt-get autoremove -y
  && apt-get dist-upgrade -y
 
 RUN apt-get install squid curl -y
@@ -16,4 +17,4 @@ RUN sed -i 's/http_port 3128/https_port 8443 tls-cert=\/ca\/server\/client-ssl.d
 RUN sed -i 's/# dns_v4_first off/dns_v4_first on/g' /etc/squid/squid.conf
 
 
-CMD apt-get update && apt-get dist-upgrade -y && squid --foreground
+CMD squid --foreground

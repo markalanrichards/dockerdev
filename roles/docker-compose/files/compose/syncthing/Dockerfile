@@ -1,6 +1,7 @@
 FROM debian:buster-slim
 
 RUN apt-get update \
+ && apt-get autoremove -y
  && apt-get dist-upgrade -y
  
 RUN apt-get install gnupg2 apt-transport-https curl -y \
@@ -16,5 +17,5 @@ RUN mkdir /opt/tosync && chown syncthing /opt/tosync
 
 SHELL ["/bin/bash", "-l", "-c"]
 
-CMD apt-get update && apt-get dist-upgrade -y && su -l -c 'syncthing -home="/opt/syncthing" -gui-address="http://0.0.0.0:8080"' syncthing
+CMD su -l -c 'syncthing -home="/opt/syncthing" -gui-address="http://0.0.0.0:8080"' syncthing
 
