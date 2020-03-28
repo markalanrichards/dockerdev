@@ -1,7 +1,7 @@
 FROM debian:buster-slim
 
 RUN apt-get update \
- && apt-get autoremove -y
+ && apt-get autoremove -y \
  && apt-get dist-upgrade -y
 
 RUN apt-get install squid curl -y
